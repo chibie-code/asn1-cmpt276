@@ -1,0 +1,70 @@
+body, html {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #E9EFF1;
+}
+
+.hintBox {
+    margin: 0.5rem;
+}
+
+.lowerBoundsDiv, .histogramDiv {
+    display: flex;
+}
+
+table {
+    flex-grow: 1;
+    margin: 1rem;
+}
+
+h3, h4 {
+    color: #B5131A;
+    text-align: left;
+}
+
+#mainArea {
+    flex-grow: 1;
+    background-color: #FFFFFF;
+}
+
+.mainContainer {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.leftCol {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.lowerBoundsDiv {
+    margin: 0.5rem;
+    flex-grow: 1;
+    background-color: #E9EFF1;
+}
+
+.rightCol {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.histogramDiv, .inputBoxDiv {
+    flex-grow: 1;
+    background-color: #E9EFF1;
+    margin: 0.5rem;
+}
+
+.innerInputDiv {
+    display: flex;
+    flex-direction: row;
+}
+
+#newGradeInputLabel, #newGradeInputBox {
+    margin: 1rem;
+}
