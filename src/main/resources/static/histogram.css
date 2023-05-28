@@ -1,12 +1,17 @@
 body, html {
     margin: 0;
     height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     background-color: #E9EFF1;
 }
 
-.hintBox {
+.inputErrorFound {
+    border: 2px solid red;
+}
+
+#hintBox {
     margin: 0.5rem;
 }
 
@@ -19,22 +24,35 @@ table {
     margin: 1rem;
 }
 
-h3, h4 {
+output[name="alertMsg"], h3 {
     color: #B5131A;
     text-align: left;
 }
 
+.hiddenAlertMsg {
+    display: none;
+}
+
 #mainArea {
     flex-grow: 1;
+    display: flex;
     background-color: #FFFFFF;
 }
 
 .mainContainer {
     margin: 0;
     height: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: row;
 }
+
+/* flip to top-down flex display on smaller/mobile screens <= 500px wide */
+@media (max-width: 500px) {
+    .mainContainer {
+        flex-direction: column;
+    }
+  }
 
 .leftCol {
     flex-grow: 1;
