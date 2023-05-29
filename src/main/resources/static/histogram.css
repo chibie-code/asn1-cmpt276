@@ -8,7 +8,7 @@ body, html {
 }
 
 .inputErrorFound {
-    border: 2px solid red;
+    border: 2px solid #B5131A;
 }
 
 #hintBox {
@@ -22,6 +22,9 @@ body, html {
 table {
     flex-grow: 1;
     margin: 1rem;
+}
+
+div[name="histBar"] {
 }
 
 output[name="alertMsg"], h3 {
@@ -48,7 +51,7 @@ output[name="alertMsg"], h3 {
 }
 
 /* flip to top-down flex display on smaller/mobile screens <= 500px wide */
-@media (max-width: 500px) {
+@media (max-width: 550px) {
     .mainContainer {
         flex-direction: column;
     }
@@ -75,6 +78,7 @@ output[name="alertMsg"], h3 {
 .histogramDiv, .inputBoxDiv {
     flex-grow: 1;
     background-color: #E9EFF1;
+    /* #A6192E */
     margin: 0.5rem;
 }
 

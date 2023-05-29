@@ -3,7 +3,7 @@
      49.93, 52.34, 53.11, 50.10, 88.88, 55.32, 55.69, 61.68, 70.44, 70.54, 90.0, 71.11, 80.01];
 // let grades = [49];
 
-/* -------------- Declare all global variables -------------- */
+/* -------------- --------------------- -------------- */
 // used to store the bounds of the corresponding grade letters
 // whether the new grade prompt will be displayed or not
 let promptIsEnabled = true;
@@ -25,37 +25,79 @@ gradeLetters.map((gletter, i) => gradeBounds.set(gletter, defaultGradeBounds[i])
 showHistogram(gradeBounds, grades);
 /*  --------------  --------------  --------------  -------------- */
 
-// handle toggle for new grade prompt
-// promptIsEnabled = document.getElementById("enablePromptToggle").addEventListener("change", (ev) => {
-//     promptIsEnabled = !promptIsEnabled;
-//     // ev.target.checked
-//     console.log("promptIsEnabled:", promptIsEnabled);
-// });
 
+// handle "max" input box
+let maxInputBox = document.getElementById('maxBoundInput');
+maxInputBox.addEventListener("change", evChange => {
+    console.log("max value onchange!");
+    // handleShowAlertMsg(evChange.target, isValidNumber(evChange.target));
+
+    // adjust the max values of all grade inputs
+    // verify whether all bounds are valid
+    console.log("isAllBoundsValid():", isAllBoundsValid());
+    // handles bounds when max changed
+    document.getElementsByName('boundInput').forEach((targetElement) => {
+        // set the max for each bound input element
+        let newMax = evChange.target.value;
+        targetElement.max = newMax;
+        showHistogram(gradeBounds, grades);
+    });
+    // handles "new grade" input error when max changed
+    let newGradeInputBox = document.getElementById("newGradeInputBox");
+
+    // show updated histogram and any error messages
+    showHistogram(gradeBounds, grades);
+    handleShowAlertMsg(newGradeInputBox, isValidNumber(parseInt(newGradeInputBox.value)));
+});
+function handleMaxInputBox(){
+    
+}
+
+function handleShowAlertMsg2() {
+    if (isAllBoundsValid()){
+        console.log("alertMsg2 add");
+        document.getElementById("alertMsg2").classList.add("hiddenAlertMsg");
+    }
+    else {
+        console.log("alertMsg2 remove");
+        document.getElementById("alertMsg2").classList.remove("hiddenAlertMsg");
+    }
+}
 
 // Handle "new grade" input box
 let newGradeInputBox = document.getElementById('newGradeInputBox');
 newGradeInputBox.addEventListener("change", evChange => {
-    console.log("change!");
+    console.log("new grade value onchange!");
+    handleShowAlertMsg2();
     handleShowAlertMsg(evChange.target, isValidNumber(evChange.target));
 });
+
 newGradeInputBox.addEventListener('keydown', (evKeyDown) => handleNewGradeInput(evKeyDown, gradeBounds, grades));
 function handleNewGradeInput(evKeyDown, gradeBounds, grades){
     try {
         let newValue = parseInt(evKeyDown.target.value);
         let isValidNumberEntered = isValidNumber(evKeyDown.target);
-        if (evKeyDown.key == "Enter") {
-            console.log("Enter keyPress!");
+        console.log("New grade entered!");
+
+        if (evKeyDown.key == "Enter"){
+            handleShowAlertMsg2();
             // this input element's value as well as the values of the bounds should be valid
-            if (isValidNumberEntered){
-                // push value to grades array
-                grades.push(newValue);
-                // show updated histogram
-                showHistogram(gradeBounds, grades);
-                console.log("Enter keyPress!", grades, maxBoundInputElement.value, newValue);
-            }else {
-                handleShowAlertMsg(evKeyDown.target, isValidNumberEntered);
+            if (isAllBoundsValid()){
+                if (isValidNumberEntered){
+                    // push value to grades array
+                    grades.push(newValue);
+
+                    // reevaluate the frequencies of each grade...
+                    // ...through show updated histogram
+                    showHistogram(gradeBounds, grades);
+                    console.log("Enter keyPress!", grades, maxBoundInputElement.value, newValue);
+                }
             }
+            else {
+                console.log("fix all invalid bounds before new grade can be added"); 
+            }     
+            // show any error messages
+            handleShowAlertMsg(evKeyDown.target, isValidNumberEntered);
         }
     }
     catch(error){
@@ -77,6 +119,7 @@ function handleBoundInput(evChange, gradeLetter, gradeBounds, grades) {
         gradeBounds.set(gradeLetter, boundValue);
         console.log("Bound input Change", gradeBounds);
     }
+    // show updated histogram and any error messages
     showHistogram(gradeBounds, grades);
     handleShowAlertMsg(evChange.target, isValidNumberEntered);
 }
@@ -90,6 +133,7 @@ let isValidNumber = (targetElement) => {
     return result;
 };
 
+// handle "name=alertMsg" error messages except for "alertMsg2"
 function handleShowAlertMsg(targetElement, isValid) {
     
     console.log("isValid:", isValid);
@@ -115,7 +159,7 @@ function handleShowAlertMsg(targetElement, isValid) {
     }    
 }
 
-// validate all lower bounds input values
+// validate all lower bounds input values when max changes
 function isAllBoundsValid(){
     let boundLabelElements = document.getElementsByName("boundLabel");
     let allBoundsAreValid = true;
@@ -129,31 +173,12 @@ function isAllBoundsValid(){
             // each element will be validated and a singl invalid one will set this variable to false
             allBoundsAreValid = false;
         }
+        // show error messages for invalid bounds
+        handleShowAlertMsg(associatedGradeBoundInputBox, isValidNumberEntered);
     });
+    showHistogram(gradeBounds, grades);
     return allBoundsAreValid;
 }
-
-// handle adjusting max of each bound
-document.getElementById("maxBoundInput")
-.addEventListener("keydown", (ev) => {
-    console.log("change max");
-    try {
-        console.log("isAllBoundsValid():", isAllBoundsValid());
-        // handles bounds when max changed
-        document.getElementsByName('boundInput').forEach((targetElement) => {
-            // set the max for each bound input element
-            let newMax = ev.target.value;
-            targetElement.max = newMax;
-        });
-        // handles "new grade" input error when max changed
-        let newGradeInputBox = document.getElementById("newGradeInputBox");
-        handleShowAlertMsg(newGradeInputBox, isValidNumber(parseInt(newGradeInputBox.value)));
-        // update histogram display
-        showHistogram(gradeBounds, grades);
-    } catch (error) {
-        console.error(error);
-    }
-});
 
 // function to show/display the histogram 
 function showHistogram(gradesBoundsMap, gradesArray) {
@@ -174,15 +199,33 @@ function updateGradesToFreqMap(gradesBoundsMap, gradesArray, gradesTofrequencyMa
         for (const [keyLetterGrade, value] of gradesBoundsMap) {
             // count frequency of scores within each grade bound
             let initCount = 0;
+            // temp array to hold the scores assigned this grade letter
+            let tempScoresForThisGrade = [];
             // count the freq within each bound/range
             const freqInThisBound = gradesArray.reduce(
                 // higher/upperBound exclusive & lower bound inclusive
-                (accum, currValue) => ((higherBound === maxBoundInputElement.value && currValue <= higherBound) || (higherBound != maxBoundInputElement.value && currValue < higherBound)) && currValue >= value ? accum + 1 : accum , initCount);
+                // loop through the grades array and shearch for all grade values that fit within this particular range of (higher bound, lower bound]
+                // if the grade values you are on meets this criteria, increment the frequency count of the grade letter for this (higher bound, lower bound] range:
+                // (accum, currValue) => ((higherBound === maxBoundInputElement.value && currValue <= higherBound) || (higherBound != maxBoundInputElement.value && currValue < higherBound)) && currValue >= value ? accum + 1 : accum , initCount);
+                (accum, currValue) => {
+                    let isHigherBoundTheSameAsMax = higherBound === maxBoundInputElement.value;
+                    let isCurrValueLessOREqualToHigherBound = currValue <= higherBound;
+                    let isCurrValueLessThanHigherBound = currValue < higherBound;
+                    if (( isHigherBoundTheSameAsMax && isCurrValueLessOREqualToHigherBound ) || ( !isHigherBoundTheSameAsMax && isCurrValueLessThanHigherBound)){
+                        // if current grade value is within the bounds of the given grade letter then increment by one and return else return just the current accumulated sum
+                        if (currValue >= value){
+                            tempScoresForThisGrade.push(currValue);
+                            return accum + 1;
+                        }
+                    }
+                    return accum;
+                }, initCount);
 
-            // update grades to freq map
+            // update frequency counts of the grades to freq map
             gradesTofrequencyMap.set(keyLetterGrade, freqInThisBound);
+            console.log(`${keyLetterGrade}: ${tempScoresForThisGrade}`);
 
-            // update higherBound to next bound
+            // update higherBound to evaluate frequency of next range/grade letter next bound
             higherBound = value;
         }
 }
